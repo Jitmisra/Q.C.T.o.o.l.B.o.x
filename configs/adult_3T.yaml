@@ -1,0 +1,41 @@
+# Adult 3T PCASL — Default Configuration
+# Provisional thresholds derived from published literature.
+# Expected to be refined via mentor-guided calibration on AURA data.
+
+profile_name: adult_3T
+description: >
+  Default thresholds for adult 3T PCASL acquisitions.
+  Literature sources: Dolui 2024 (QEI), Power 2012 (FWD),
+  Mutsaerts 2017 (sCoV), Alsop 2015 (M0 TR).
+
+modules:
+  qei:
+    enabled: true
+    thresholds:
+      fail_below: 0.30    # Dolui 2024 Fig. 4 "Unacceptable" cluster
+      warn_below: 0.55    # Below "Good" quality
+
+  motion:
+    enabled: true
+    thresholds:
+      fwd_fail_above: 1.5   # Power 2012 (conservative)
+      fwd_warn_above: 0.5   # Common fMRI scrubbing threshold
+
+  control_label:
+    enabled: true
+    thresholds: {}           # Binary checks (no tunable thresholds)
+
+  m0_check:
+    enabled: true
+    thresholds:
+      tr_fail_below: 2.0    # Alsop 2015 White Paper
+      tr_warn_below: 4.0
+      saturation_pct_fail: 5.0
+
+  snr_cov:
+    enabled: true
+    thresholds:
+      scov_fail_above: 90.0   # Mutsaerts 2017 (mean 56.9 +/- 13.2%)
+      scov_warn_above: 70.0
+      neg_frac_fail_above: 0.20
+      neg_frac_warn_above: 0.10
