@@ -1,0 +1,42 @@
+# Neonatal CHD — Population-Specific Configuration
+# Thresholds adapted for neonates with complex congenital heart disease.
+# Motivated by Mora Alvarez et al. (2024, MAGMA): neonatal CBF ranges
+# are 20-50 mL/100g/min vs ~55 in healthy adults.
+
+profile_name: neonatal_chd
+description: >
+  Thresholds for neonatal perfusion in congenital heart disease.
+  CBF ranges are fundamentally different from adults. A single
+  adult threshold set would condemn every neonatal scan as FAIL.
+
+modules:
+  qei:
+    enabled: true
+    thresholds:
+      fail_below: 0.20      # More lenient (lower SNR expected)
+      warn_below: 0.40
+
+  motion:
+    enabled: true
+    thresholds:
+      fwd_fail_above: 2.0   # Neonates move more
+      fwd_warn_above: 1.0
+
+  control_label:
+    enabled: true
+    thresholds: {}
+
+  m0_check:
+    enabled: true
+    thresholds:
+      tr_fail_below: 2.0
+      tr_warn_below: 4.0
+      saturation_pct_fail: 5.0
+
+  snr_cov:
+    enabled: true
+    thresholds:
+      scov_fail_above: 120.0   # Higher variability expected
+      scov_warn_above: 90.0
+      neg_frac_fail_above: 0.30
+      neg_frac_warn_above: 0.15
