@@ -506,7 +506,7 @@ def generate_html_report(results: list[dict[str, Any]], config_name: str = "defa
                 </div>
             </td>
             <td><span style="font-size:13px;color:{COLORS['text_muted']}">{primary_artifact}</span></td>
-            <td><a class="action-link" onclick="showDetail('{sid}')">View Report</a></td>
+            <td><button class="btn btn-primary" onclick="showDetail('{sid}')" style="padding: 6px 12px; font-size: 12px; border-radius: 6px;">View Report \<a class="action-link" onclick="showDetail('{sid}')">View Report</a>rarr;</button></td>
         </tr>
         """
 
