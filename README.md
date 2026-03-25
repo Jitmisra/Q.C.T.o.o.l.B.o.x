@@ -2,7 +2,6 @@
 
 **A pipeline-agnostic ASL CBF map QC and triage engine, with optional BIDS-aware acquisition checks when raw inputs are available.**
 
-> *GSoC 2026 prototype for the [Quality Check ToolBox V1.0](https://github.com/OSIPI/TF6.2-AURA-ASL) project under OSIPI.*
 
 ---
 
