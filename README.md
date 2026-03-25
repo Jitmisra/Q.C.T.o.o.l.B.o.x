@@ -1,4 +1,4 @@
-# osipy-qc: ASL Quality Control for OSIPI
+# osipy-qc: ASL Q.u.a.l.i.t.y Control
 
 **A pipeline-agnostic ASL CBF map QC and triage engine, with optional BIDS-aware acquisition checks when raw inputs are available.**
 
