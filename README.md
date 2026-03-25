@@ -44,7 +44,7 @@ Click any participant to see their complete quality report. Each deep dive inclu
 ---
 
 ## 🏗️ Architecture
-<img width="227" height="470" alt="Monosnap QC-ToolBox V1 0 2026-03-25 14-09-50" src="https://github.com/user-attachments/assets/37a66f0f-4c46-4bce-909c-0501712855eb" />
+<img width="727" height="397" alt="Monosnap JitmisraQ C T o o l B o x 2026-03-25 15-00-44" src="https://github.com/user-attachments/assets/003b4f5d-2283-4f1b-bc70-027d1e6d25f5" />
 
 
 ### Data Flow: How Files Move Through the Pipeline
