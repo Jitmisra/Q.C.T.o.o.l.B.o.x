@@ -44,108 +44,18 @@ Click any participant to see their complete quality report. Each deep dive inclu
 ---
 
 ## 🏗️ Architecture
+<img width="227" height="470" alt="Monosnap QC-ToolBox V1 0 2026-03-25 14-09-50" src="https://github.com/user-attachments/assets/37a66f0f-4c46-4bce-909c-0501712855eb" />
 
-```mermaid
-flowchart TD
-    subgraph inputs["📥 Inputs"]
-        BIDS["BIDS Dataset\npybids"]
-        CFG["YAML Config\nThresholds + Population"]
-    end
-
-    subgraph core["⚙️ Core Engine"]
-        REG["Module Registry\n@register_qc_check"]
-        ORCH["Pipeline\nOrchestrator"]
-        REG --> ORCH
-    end
-
-    subgraph modules["📐 QC Modules"]
-        M1["QEI\n(Dolui 2024)"] & M2["Motion\n(FWD+DVARS)"] & M3["Control-Label\n(BIDS)"]
-        M4["M0 Check\n(Calibration)"] & M5["SNR/sCoV\n(Histogram)"]
-    end
-
-    subgraph outputs["📤 Outputs"]
-        FLAG["PASS / WARN / FAIL\n/ UNKNOWN"]
-        JSON["JSON Report"]
-        HTML["HTML Dashboard\n(8 brain visuals)"]
-    end
-
-    BIDS & CFG --> ORCH
-    ORCH --> M1 & M2 & M3 & M4 & M5
-    M1 & M2 & M3 & M4 & M5 --> FLAG
-    FLAG --> JSON & HTML
-
-    style inputs fill:#e3f2fd,color:#0d47a1
-    style core fill:#1a237e,color:#e8eaf6
-    style ORCH fill:#1565c0,color:#fff,stroke:#0d47a1,stroke-width:2px
-    style REG fill:#283593,color:#fff
-    style modules fill:#e8f5e9,color:#1b5e20
-    style M1 fill:#2e7d32,color:#fff
-    style M2 fill:#388e3c,color:#fff
-    style M3 fill:#43a047,color:#fff
-    style M4 fill:#4caf50,color:#fff
-    style M5 fill:#66bb6a,color:#fff
-    style outputs fill:#fff3e0,color:#e65100
-    style FLAG fill:#e65100,color:#fff,stroke:#bf360c,stroke-width:3px
-    style JSON fill:#f57c00,color:#fff
-    style HTML fill:#ff9800,color:#212121
-```
 
 ### Data Flow: How Files Move Through the Pipeline
 
-```mermaid
-flowchart TD
-    subgraph bids["📁 BIDS Directory"]
-        ASL["_asl.nii.gz\n(raw 4D ASL)"]
-        CTX["_aslcontext.tsv\n(volume ordering)"]
-        M0F["_m0scan.nii.gz\n(calibration)"]
-        JSN["_asl.json\n(sidecar metadata)"]
-        CBF["CBF map\n(from any pipeline)"]
-        SEG["GM/WM/CSF\nprobability maps"]
-    end
+<img width="688" height="290" alt="Monosnap JitmisraQ C T o o l B o x 2026-03-25 15-00-56" src="https://github.com/user-attachments/assets/393a65da-be9c-43f1-8d6c-0b05eb2457ed" />
 
-    ASL --> MOT["Motion Module\nFWD + DVARS"]
-    ASL & CTX & JSN --> CL["Control-Label\nModule"]
-    M0F & JSN --> M0["M0 Module\nSaturation + TR"]
-    CBF & SEG --> QEI["QEI Module\n3-component score"]
-    CBF & SEG --> SNR["SNR/sCoV\nModule"]
-
-    MOT & CL & M0 & QEI & SNR --> VE["Verdict Engine\nPASS / WARN / FAIL / UNKNOWN"]
-    VE --> OUT["JSON + HTML Report\n(8 visualizations)"]
-
-    style bids fill:#e3f2fd,color:#0d47a1
-    style VE fill:#1a237e,color:#e8eaf6,stroke:#0d47a1,stroke-width:3px
-    style OUT fill:#ff9800,color:#212121
-    style MOT fill:#2e7d32,color:#fff
-    style CL fill:#388e3c,color:#fff
-    style M0 fill:#43a047,color:#fff
-    style QEI fill:#1565c0,color:#fff,stroke:#0d47a1,stroke-width:2px
-    style SNR fill:#66bb6a,color:#fff
-```
 
 ### Verdict Logic
 
-```mermaid
-flowchart TD
-    A["📋 Collect All Module Results"] --> CHK{"Any module\nreturned UNKNOWN?"}
-    CHK -->|"Yes"| NOTE["Flag missing modules\nin report"]
-    CHK -->|"No"| B
-    NOTE --> B{"QEI below\nFAIL threshold?"}
-    B -->|"Yes"| FAIL["FAIL\nScan unusable"]
-    B -->|"No"| C{"Control-label\nswap detected?"}
-    C -->|"Yes"| FAIL
-    C -->|"No"| D{"M0 saturated\nor TR too short?"}
-    D -->|"Yes"| FAIL
-    D -->|"No"| E{"Any module\nwarnings?"}
-    E -->|"Yes"| WARN["WARN\nReview recommended"]
-    E -->|"No"| PASS["PASS\nScan usable"]
+<img width="213" height="563" alt="Monosnap JitmisraQ C T o o l B o x 2026-03-25 15-01-15" src="https://github.com/user-attachments/assets/f7f0430d-ee56-44e5-915a-940798d490cd" />
 
-    style A fill:#1565c0,color:#fff
-    style CHK fill:#546e7a,color:#fff
-    style NOTE fill:#78909c,color:#fff
-    style FAIL fill:#c62828,color:#fff,stroke:#b71c1c,stroke-width:3px
-    style WARN fill:#e65100,color:#fff,stroke:#bf360c,stroke-width:2px
-    style PASS fill:#2e7d32,color:#fff,stroke:#1b5e20,stroke-width:3px
-```
 
 ### Two-Layer Design
 
