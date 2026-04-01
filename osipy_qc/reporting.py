@@ -820,6 +820,28 @@ result = run_qc(data)</code></pre>
             <div id="view-overview" style="display:block;">
                 <div class="topbar">
                     <div class="topbar-title">QC-ToolBox V1.0</div>
+                    <div style="position:relative;display:inline-block;margin-left:16px;">
+                        <select id="organ-selector" style="
+                            padding: 5px 28px 5px 10px;
+                            font-size: 12px;
+                            font-weight: 600;
+                            border: 1px solid {COLORS['border']};
+                            border-radius: 6px;
+                            background: {COLORS['card']};
+                            color: {COLORS['text_main']};
+                            cursor: pointer;
+                            appearance: none;
+                            -webkit-appearance: none;
+                            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2012%2012%22%3E%3Cpath%20fill%3D%22%23666%22%20d%3D%22M6%208L1%203h10z%22%2F%3E%3C%2Fsvg%3E');
+                            background-repeat: no-repeat;
+                            background-position: right 8px center;
+                        " onchange="if(this.value!=='brain'){{alert('Multi-organ QC modules ('+this.value+') are planned for GSoC 2026. See proposal section 6.7 for details.');this.value='brain';}}">
+                            <option value="brain" selected>Brain</option>
+                            <option value="kidney" style="color:#999">Kidney (planned)</option>
+                            <option value="placenta" style="color:#999">Placenta (planned)</option>
+                            <option value="preclinical" style="color:#999">Preclinical (planned)</option>
+                        </select>
+                    </div>
                     <div class="topbar-links">
                         <a class="topbar-link active">Dashboard</a>
                         <a class="topbar-link">Projects</a>
