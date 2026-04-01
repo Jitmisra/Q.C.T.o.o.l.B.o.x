@@ -1,7 +1,8 @@
 """Tests for motion module (FWD and DVARS)."""
 
 import numpy as np
-from osipy_qc.modules.motion import compute_fwd, compute_dvars, MotionCheck
+
+from osipy_qc.modules.motion import MotionCheck, compute_dvars, compute_fwd
 from osipy_qc.verdict import Verdict
 
 
@@ -42,7 +43,7 @@ def test_dvars_constant_signal():
 
 def test_dvars_spike():
     """Signal spike should produce high DVARS at that timepoint."""
-    rng = np.random.default_rng(42)
+    np.random.default_rng(42)
     asl = np.ones((10, 10, 10, 60)) * 1000
     asl[..., 30] += 500  # 50% signal spike at frame 30
     mask = np.ones((10, 10, 10), dtype=bool)

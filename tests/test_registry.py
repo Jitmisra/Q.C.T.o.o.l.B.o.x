@@ -1,13 +1,10 @@
 """Tests for the QC module registry pattern."""
 
 from osipy_qc.registry import (
-    register_qc_check,
+    BaseQCCheck,
     get_qc_check,
     list_qc_checks,
-    BaseQCCheck,
-    ModuleResult,
 )
-from osipy_qc.verdict import Verdict
 
 
 def test_list_qc_checks():

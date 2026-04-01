@@ -23,11 +23,7 @@ from __future__ import annotations
 
 from typing import Any
 
-import numpy as np
-
-from osipy_qc.registry import register_qc_check, BaseQCCheck, ModuleResult
-from osipy_qc.verdict import Verdict
-
+from osipy_qc.registry import BaseQCCheck, ModuleResult, register_qc_check
 
 # ---------------------------------------------------------------------------
 # Target reference values (from PARENCHIMA consensus + literature)

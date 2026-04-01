@@ -9,7 +9,6 @@ return UNKNOWN instead of crashing the pipeline.
 from __future__ import annotations
 
 from enum import Enum
-from typing import Any
 
 
 class Verdict(Enum):

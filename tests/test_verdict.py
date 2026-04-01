@@ -1,9 +1,9 @@
 """Tests for verdict engine and graceful degradation."""
 
-from osipy_qc.verdict import Verdict, combine_verdicts, verdict_from_thresholds
-from osipy_qc.pipeline import run_qc
 import numpy as np
 
+from osipy_qc.pipeline import run_qc
+from osipy_qc.verdict import Verdict, combine_verdicts, verdict_from_thresholds
 
 # --- Verdict combination tests ---
 

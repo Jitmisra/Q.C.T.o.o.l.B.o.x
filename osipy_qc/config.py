@@ -11,7 +11,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
 
 import yaml
 
@@ -38,7 +37,7 @@ class QCConfig:
     modules: dict[str, ModuleConfig] = field(default_factory=dict)
 
     @classmethod
-    def from_yaml(cls, path: str | Path) -> "QCConfig":
+    def from_yaml(cls, path: str | Path) -> QCConfig:
         """Load config from a YAML file."""
         path = Path(path)
         if not path.exists():
@@ -61,7 +60,7 @@ class QCConfig:
         )
 
     @classmethod
-    def default(cls) -> "QCConfig":
+    def default(cls) -> QCConfig:
         """Return built-in adult 3T PCASL defaults."""
         return cls(
             profile_name="adult_3T_default",

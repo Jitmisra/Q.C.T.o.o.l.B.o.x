@@ -1,12 +1,13 @@
 """Tests for QEI module on synthetic data (no binary blobs in repo)."""
 
 import numpy as np
+
 from osipy_qc.modules.qei import (
-    structural_similarity,
-    spatial_variability,
-    negative_voxel_fraction,
-    compute_qei,
     QEICheck,
+    compute_qei,
+    negative_voxel_fraction,
+    spatial_variability,
+    structural_similarity,
 )
 from osipy_qc.verdict import Verdict
 

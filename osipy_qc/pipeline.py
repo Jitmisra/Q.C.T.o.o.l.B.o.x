@@ -10,18 +10,10 @@ from __future__ import annotations
 
 from typing import Any
 
-import numpy as np
-
-from osipy_qc.registry import list_qc_checks, get_qc_check, ModuleResult
-from osipy_qc.verdict import Verdict, combine_verdicts
-from osipy_qc.config import QCConfig
-
 # Import modules to trigger registration
-import osipy_qc.modules.qei
-import osipy_qc.modules.motion
-import osipy_qc.modules.control_label
-import osipy_qc.modules.m0_check
-import osipy_qc.modules.snr_cov
+from osipy_qc.config import QCConfig
+from osipy_qc.registry import ModuleResult, get_qc_check, list_qc_checks
+from osipy_qc.verdict import Verdict, combine_verdicts
 
 
 def run_qc(

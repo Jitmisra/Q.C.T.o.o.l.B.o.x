@@ -13,11 +13,7 @@ matching the QC-ToolBox V1.0 Figma mockups. Features:
 
 from __future__ import annotations
 
-import json
-from datetime import datetime
 from typing import Any
-
-
 
 # ──────────────────────────────────────────────────────────────
 # Color palette (derived exactly from Figma mockups)
@@ -339,7 +335,7 @@ def _css() -> str:
     /* Artifact breakdown bars */
     .artifact-row {{ margin-bottom: 16px; }}
     .artifact-meta {{ display: flex; justify-content: space-between; font-size: 13px; font-weight: 500; margin-bottom: 8px; }}
-    
+
     /* Screen 2 - Deep Dive Specifics */
     .subject-header-pill {{
         background: {COLORS["pass_bg"]};
@@ -392,7 +388,7 @@ def _css() -> str:
     }}
     .qei-breakdown-label {{ font-size: 14px; font-weight: 500; width: 160px; }}
     .qei-breakdown-val {{ font-size: 15px; font-weight: 600; margin-left: auto; }}
-    
+
     .checklist-item {{
         display: flex;
         justify-content: space-between;
@@ -486,15 +482,15 @@ def generate_html_report(results: list[dict[str, Any]], config_name: str = "defa
         sid = r.get("subject_id", "unknown")
         v = r.get("overall_verdict", "UNKNOWN")
         qei_val = r.get("modules", {}).get("qei", {}).get("metrics", {}).get("qei", 0)
-        
+
         primary_artifact = "None"
         for mname, mod in r.get("modules", {}).items():
             if mod.get("verdict") in ["WARN", "FAIL"]:
                 primary_artifact = mname.replace("_", " ").title()
                 break
-                
+
         qei_color = COLORS["pass"] if qei_val >= 0.55 else COLORS["warn"] if qei_val >= 0.3 else COLORS["fail"]
-        
+
         ledger_rows += f"""
         <tr>
             <td style="font-weight:500">{sid}</td>
@@ -545,13 +541,13 @@ def generate_html_report(results: list[dict[str, Any]], config_name: str = "defa
         sid = r.get("subject_id", "unknown")
         v = r.get("overall_verdict", "UNKNOWN")
         mods = r.get("modules", {})
-        
+
         qei_m = mods.get("qei", {}).get("metrics", {})
         qei_val = qei_m.get("qei", 0)
         pss = qei_m.get("structural_similarity", 0)
         di = qei_m.get("spatial_variability", 0)
         neg = qei_m.get("negative_voxel_fraction", 0)
-        
+
         # Checklist
         checklist = ""
         for mname, mod in mods.items():
@@ -566,7 +562,7 @@ def generate_html_report(results: list[dict[str, Any]], config_name: str = "defa
                 {_badge(mv)}
             </div>
             """
-            
+
         # Fetch real metrics — show N/A when module returned UNKNOWN
         motion_v = mods.get("motion", {}).get("verdict", "UNKNOWN")
         motion_m = mods.get("motion", {}).get("metrics", {})
@@ -660,7 +656,7 @@ def generate_html_report(results: list[dict[str, Any]], config_name: str = "defa
             # Row 3: CBF histogram + Timecourse
             # Row 4: FWD timeseries (full width, if available)
             # Row 5: Motion params (full width, if available)
-            row1 = f'<div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:0">'
+            row1 = '<div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:0">'
             row1 += f'<img src="data:image/png;base64,{imgs.get("cbf_slice","")}" alt="CBF Map" style="width:100%;height:auto;display:block;border-right:1px solid {COLORS["border"]};border-bottom:1px solid {COLORS["border"]}">'
             row1 += f'<img src="data:image/png;base64,{imgs.get("tissue_overlay","")}" alt="Tissue Masks" style="width:100%;height:auto;display:block;border-right:1px solid {COLORS["border"]};border-bottom:1px solid {COLORS["border"]}">'
             row1 += f'<img src="data:image/png;base64,{imgs.get("qei_radar","")}" alt="QEI Radar" style="width:100%;height:auto;display:block;border-bottom:1px solid {COLORS["border"]}">'
@@ -670,7 +666,7 @@ def generate_html_report(results: list[dict[str, Any]], config_name: str = "defa
             if imgs.get('triplane'):
                 row2 = f'<img src="data:image/png;base64,{imgs["triplane"]}" alt="Tri-Plane" style="width:100%;height:auto;display:block;border-bottom:1px solid {COLORS["border"]}">'
 
-            row3 = f'<div style="display:grid; grid-template-columns:1fr 1fr; gap:0">'
+            row3 = '<div style="display:grid; grid-template-columns:1fr 1fr; gap:0">'
             row3 += f'<img src="data:image/png;base64,{imgs.get("cbf_histogram","")}" alt="CBF Histogram" style="width:100%;height:auto;display:block;border-right:1px solid {COLORS["border"]};border-bottom:1px solid {COLORS["border"]}">'
             row3 += f'<img src="data:image/png;base64,{imgs.get("timecourse","")}" alt="Timecourse" style="width:100%;height:auto;display:block;border-bottom:1px solid {COLORS["border"]}">'
             row3 += '</div>'
@@ -848,7 +844,7 @@ result = run_qc(data)</code></pre>
                         <a class="topbar-link">Archive</a>
                     </div>
                 </div>
-            
+
                 <div class="page-container">
                     <div class="page-header">
                         <div>
@@ -910,7 +906,7 @@ result = run_qc(data)</code></pre>
                         <div class="card">
                             <div style="font-size:11px; font-weight:700; color:{COLORS['text_muted']}; letter-spacing:1px; margin-bottom:24px">ARTIFACT BREAKDOWN</div>
                             {artifact_html}
-                            
+
                             <div style="margin-top:32px; background:#FAF2ED; padding:16px; border-radius:8px; border:1px solid #EEDFCA">
                                 <div style="font-weight:600; font-size:13px; margin-bottom:8px; color:{COLORS['primary']}">&#128161; Batch Insight</div>
                                 <div style="font-size:12px; color:{COLORS['text_muted']}">Analysis of <strong>{n_total}</strong> subjects completed. The current cohort exhibits a <strong>{pass_rate:.1f}%</strong> pass rate based on the '{config_name}' quality profile thresholds.</div>
@@ -919,7 +915,7 @@ result = run_qc(data)</code></pre>
                     </div>
                 </div>
             </div>
-            
+
             <!-- Details View Shell -->
             <div id="view-detail" style="display:none;">
                 <div class="topbar">
@@ -933,7 +929,7 @@ result = run_qc(data)</code></pre>
                     {deep_dives}
                 </div>
             </div>
-            
+
         </div>
     </div>
 </body>

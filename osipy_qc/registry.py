@@ -19,10 +19,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Any
 
-import numpy as np
-
 from osipy_qc.verdict import Verdict
-
 
 # ---------------------------------------------------------------------------
 # Module result container

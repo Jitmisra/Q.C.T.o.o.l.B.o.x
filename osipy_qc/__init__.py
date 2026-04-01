@@ -12,8 +12,8 @@ Usage
 >>> result = run_qc("path/to/bids", subject="sub-01", config="adult_3T")
 """
 
-from osipy_qc.registry import register_qc_check, get_qc_check, list_qc_checks
 from osipy_qc.pipeline import run_qc
+from osipy_qc.registry import get_qc_check, list_qc_checks, register_qc_check
 from osipy_qc.verdict import Verdict
 
 __all__ = [
