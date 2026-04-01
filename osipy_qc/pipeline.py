@@ -11,17 +11,17 @@ from __future__ import annotations
 from typing import Any
 
 # Import modules to trigger registration
-from osipy_qc.config import QCConfig
-from osipy_qc.registry import ModuleResult, get_qc_check, list_qc_checks
-from osipy_qc.verdict import Verdict, combine_verdicts
-
-# Import modules to trigger registration
 import osipy_qc.modules.control_label  # noqa: F401
 import osipy_qc.modules.m0_check  # noqa: F401
 import osipy_qc.modules.motion  # noqa: F401
 import osipy_qc.modules.qei  # noqa: F401
 import osipy_qc.modules.renal_cortex_medulla  # noqa: F401
 import osipy_qc.modules.snr_cov  # noqa: F401
+
+# Import modules to trigger registration
+from osipy_qc.config import QCConfig
+from osipy_qc.registry import ModuleResult, get_qc_check, list_qc_checks
+from osipy_qc.verdict import Verdict, combine_verdicts
 
 
 def run_qc(
