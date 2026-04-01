@@ -13,7 +13,19 @@ matching the QC-ToolBox V1.0 Figma mockups. Features:
 
 from __future__ import annotations
 
+import base64
+import os
+from pathlib import Path
 from typing import Any
+
+
+def _load_icon_b64() -> str:
+    """Load icon.png from the project root and return as base64 string."""
+    # Look for icon.png relative to this file's parent (osipy_qc/) -> project root
+    icon_path = Path(__file__).resolve().parent.parent / "icon.png"
+    if icon_path.exists():
+        return base64.b64encode(icon_path.read_bytes()).decode()
+    return ""
 
 # ──────────────────────────────────────────────────────────────
 # Color palette (derived exactly from Figma mockups)
@@ -84,15 +96,17 @@ def _css() -> str:
         margin-bottom: 40px;
     }}
     .logo-icon {{
-        width: 32px;
-        height: 32px;
-        background: {COLORS["primary"]};
-        border-radius: 6px;
+        width: 38px;
+        height: 38px;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: white;
-        font-weight: bold;
+        flex-shrink: 0;
+    }}
+    .logo-icon img {{
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
     }}
     .logo-text-title {{
         font-size: 16px;
@@ -147,14 +161,22 @@ def _css() -> str:
     .topbar {{
         display: flex;
         align-items: center;
-        padding: 24px 48px;
-        border-bottom: 1px solid transparent; /* matches bg generally but keeps spacing */
+        flex-wrap: wrap;
+        gap: 16px;
+        padding: 20px 48px;
+        border-bottom: 1px solid {COLORS["border"]};
+    }}
+    .topbar-left {{
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        flex-shrink: 0;
     }}
     .topbar-title {{
         font-size: 18px;
         font-weight: 700;
         color: {COLORS["primary"]};
-        margin-right: 32px;
+        white-space: nowrap;
     }}
     .topbar-links {{
         display: flex;
@@ -162,6 +184,15 @@ def _css() -> str:
         font-size: 14px;
         font-weight: 500;
         color: {COLORS["text_muted"]};
+        margin-left: auto;
+    }}
+    .topbar-link {{
+        cursor: pointer;
+        transition: color 0.2s;
+        white-space: nowrap;
+    }}
+    .topbar-link:hover {{
+        color: {COLORS["primary"]};
     }}
     .topbar-link.active {{
         color: {COLORS["primary"]};
@@ -397,6 +428,39 @@ def _css() -> str:
         border-bottom: 1px solid {COLORS["border"]};
     }}
     .checklist-item:last-child {{ border-bottom: none; }}
+
+    /* ── Responsive breakpoints ── */
+    @media (max-width: 1200px) {{
+        .sidebar {{ width: 220px; padding: 24px 16px; }}
+        .main-content {{ margin-left: 220px; }}
+        .topbar {{ padding: 20px 32px; }}
+        .page-container {{ padding: 0 32px 32px; }}
+        .stats-grid {{ grid-template-columns: repeat(2, 1fr); }}
+    }}
+
+    @media (max-width: 960px) {{
+        .sidebar {{ display: none; }}
+        .main-content {{ margin-left: 0; }}
+        .topbar {{ padding: 16px 24px; }}
+        .page-container {{ padding: 0 24px 24px; }}
+        .grid-23 {{ grid-template-columns: 1fr; }}
+        .page-title {{ font-size: 24px; }}
+        .page-header {{ flex-direction: column; gap: 16px; }}
+    }}
+
+    @media (max-width: 640px) {{
+        .topbar {{
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 16px;
+        }}
+        .topbar-links {{ margin-left: 0; }}
+        .stats-grid {{ grid-template-columns: 1fr; }}
+        .page-container {{ padding: 0 16px 16px; }}
+        .page-title {{ font-size: 20px; }}
+        .table th, .table td {{ padding: 10px 12px; font-size: 12px; }}
+    }}
     """
 
 def _js() -> str:
@@ -767,10 +831,10 @@ def generate_html_report(results: list[dict[str, Any]], config_name: str = "defa
     <div class="layout">
         <div class="sidebar">
             <div class="logo-container">
-                <div class="logo-icon">N</div>
+                <div class="logo-icon"><img src="data:image/png;base64,{_load_icon_b64()}" alt="OSIPI"></div>
                 <div>
-                    <div class="logo-text-title">NeuroImaging<br>Lab</div>
-                    <div class="logo-text-sub">CLINICAL EDITORIAL V1.0</div>
+                    <div class="logo-text-title">OSIPI</div>
+                    <div class="logo-text-sub">QC-TOOLBOX V1.0</div>
                 </div>
             </div>
 
@@ -815,8 +879,8 @@ result = run_qc(data)</code></pre>
             <!-- Global Topbar area -->
             <div id="view-overview" style="display:block;">
                 <div class="topbar">
-                    <div class="topbar-title">QC-ToolBox V1.0</div>
-                    <div style="position:relative;display:inline-block;margin-left:16px;">
+                    <div class="topbar-left">
+                        <div class="topbar-title">QC-ToolBox V1.0</div>
                         <select id="organ-selector" style="
                             padding: 5px 28px 5px 10px;
                             font-size: 12px;
@@ -831,7 +895,7 @@ result = run_qc(data)</code></pre>
                             background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2012%2012%22%3E%3Cpath%20fill%3D%22%23666%22%20d%3D%22M6%208L1%203h10z%22%2F%3E%3C%2Fsvg%3E');
                             background-repeat: no-repeat;
                             background-position: right 8px center;
-                        " onchange="if(this.value!=='brain'){{alert('Multi-organ QC modules ('+this.value+') are planned for GSoC 2026. See proposal section 6.7 for details.');this.value='brain';}}">
+                        " onchange="if(this.value!=='brain'){{alert('Multi-organ QC modules ('+this.value+') are planned for GSoC 2026.');this.value='brain';}}">
                             <option value="brain" selected>Brain</option>
                             <option value="kidney" style="color:#999">Kidney (planned)</option>
                             <option value="placenta" style="color:#999">Placenta (planned)</option>
@@ -840,8 +904,8 @@ result = run_qc(data)</code></pre>
                     </div>
                     <div class="topbar-links">
                         <a class="topbar-link active">Dashboard</a>
-                        <a class="topbar-link">Projects</a>
-                        <a class="topbar-link">Archive</a>
+                        <a class="topbar-link" onclick="alert('Project views are planned for GSoC 2026.')">Projects</a>
+                        <a class="topbar-link" onclick="alert('Archiving is planned for GSoC 2026.')">Archive</a>
                     </div>
                 </div>
 
@@ -851,8 +915,8 @@ result = run_qc(data)</code></pre>
                             <div class="page-title">Batch Overview</div>
                             <div class="page-subtitle">Dataset: {dataset_name} &bull; {n_total} Active Participants</div>
                         </div>
-                        <div style="display:flex;gap:12px">
-                            <button class="btn btn-outline">Filter</button>
+                        <div style="display:flex;gap:12px;flex-wrap:wrap">
+                            <button class="btn btn-outline" onclick="alert('Advanced filtering is planned for GSoC 2026.')">Filter</button>
                             <button class="btn btn-primary" onclick="exportReport()">Export Report</button>
                         </div>
                     </div>
@@ -919,7 +983,9 @@ result = run_qc(data)</code></pre>
             <!-- Details View Shell -->
             <div id="view-detail" style="display:none;">
                 <div class="topbar">
-                    <div class="topbar-title">QC-ToolBox V1.0</div>
+                    <div class="topbar-left">
+                        <div class="topbar-title">QC-ToolBox V1.0</div>
+                    </div>
                     <div class="topbar-links">
                         <a class="topbar-link active" onclick="showOverview()" style="cursor:pointer">&larr; Subject Deep Dive</a>
                         <a class="topbar-link" id="topbar-subject-id"></a>
