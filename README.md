@@ -1,3 +1,4 @@
+**I have used Real MNI ICBM-152 2009 anatomical MRI template**
 <img width="1500" height="795" alt="Monosnap QC-ToolBox V1 0 2026-04-01 16-11-29" src="https://github.com/user-attachments/assets/d6195dfd-7889-47b6-9949-fed1b85ee749" /># osipy-qc: ASL Q.u.a.l.i.t.y Control
 
 **A pipeline-agnostic ASL CBF map QC and triage engine, with optional BIDS-aware acquisition checks when raw inputs are available.**
