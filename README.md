@@ -1,4 +1,4 @@
-# osipy-qc: ASL Q.u.a.l.i.t.y Control
+<img width="1500" height="795" alt="Monosnap QC-ToolBox V1 0 2026-04-01 16-11-29" src="https://github.com/user-attachments/assets/d6195dfd-7889-47b6-9949-fed1b85ee749" /># osipy-qc: ASL Q.u.a.l.i.t.y Control
 
 **A pipeline-agnostic ASL CBF map QC and triage engine, with optional BIDS-aware acquisition checks when raw inputs are available.**
 
@@ -35,13 +35,17 @@ Interactive dashboard with aggregate statistics, participant ledger, artifact br
 Click any participant to see their complete quality report. Each deep dive includes **8 distinct brain visualizations** (4 more than any existing open-source ASL QC tool):
 
 **Row 1: CBF Heatmap + Tissue Mask Overlay + QEI Radar Chart**
-![CBF heatmap, tissue overlay with GM/WM boundaries, and QEI component radar chart](image/Monosnap%20QC-ToolBox%20V1.0%202026-04-01%2016-11-29.png)
+![CBF heatmap, tissue overlay with GM/WM boundaries, and QEI component radar chart]
+<img width="1500" height="795" alt="Monosnap QC-ToolBox V1 0 2026-04-01 16-11-29" src="https://github.com/user-attachments/assets/6e13cb8e-54d7-4411-9a0c-b670f63a4e08" />
 
 **Row 2: Tri-Plane View + CBF Histogram + Signal Timecourse**
-![Tri-plane CBF view (axial/coronal/sagittal), CBF distribution by tissue type, control vs label timecourse](image/Monosnap%20QC-ToolBox%20V1.0%202026-04-01%2016-11-38.png)
+![Tri-plane CBF view (axial/coronal/sagittal), CBF distribution by tissue type, control vs label timecourse]
+<img width="1498" height="791" alt="Monosnap QC-ToolBox V1 0 2026-04-01 16-11-38" src="https://github.com/user-attachments/assets/5086104a-17e6-4e46-9724-2370133df3f4" />
+
 
 **Row 3: Frame-wise Displacement + 6-Parameter Motion Plots**
-![FWD timeseries with threshold and spike markers, 3-axis translation and rotation plots](image/Monosnap%20QC-ToolBox%20V1.0%202026-04-01%2016-11-55.png)
+![FWD timeseries with threshold and spike markers, 3-axis translation and rotation plots]
+<img width="658" height="777" alt="Monosnap QC-ToolBox V1 0 2026-04-01 16-11-55" src="https://github.com/user-attachments/assets/b5aed5b6-8959-40e3-9c8d-773b1c05448f" />
 
 ---
 
