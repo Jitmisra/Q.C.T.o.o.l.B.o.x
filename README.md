@@ -1,4 +1,6 @@
-**I have used Real MNI ICBM-152 2009 anatomical MRI template**
+> **Note on Data Authenticity in the Prototype:**
+> To showcase the dashboard without bloating the repository with massive `.nii.gz` files, `generate_report.py` dynamically downloads the **MNI ICBM152 2009** structural MRI template via `nilearn`/`nibabel`. It extracts the **real Gray Matter, White Matter, and CSF anatomical masks** and applies simulated ASL physics (motion vectors & physiological CBF values) to them. 
+> Every graph, metric, and visualization shown in the dashboard is 100% computed by the `osipy_qc` pipeline operating on this highly realistic, structurally accurate mock data.
 <img width="1500" height="795" alt="Monosnap QC-ToolBox V1 0 2026-04-01 16-11-29" src="https://github.com/user-attachments/assets/d6195dfd-7889-47b6-9949-fed1b85ee749" /># osipy-qc: ASL Q.u.a.l.i.t.y Control
 
 **A pipeline-agnostic ASL CBF map QC and triage engine, with optional BIDS-aware acquisition checks when raw inputs are available.**
