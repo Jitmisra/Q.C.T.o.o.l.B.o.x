@@ -19,6 +19,7 @@ import base64
 import io
 
 import numpy as np
+from scipy.ndimage import gaussian_filter, zoom
 
 import matplotlib
 matplotlib.use("Agg")
@@ -318,40 +319,123 @@ def render_qei_radar(pss, di, neg, qei) -> str:
 # Subject data generation
 # ──────────────────────────────────────────────────────────────
 
+_REAL_DATA_CACHE = None
+
+def get_real_mni_data():
+    """Download and cache the real MNI ICBM152 anatomical template masks."""
+    global _REAL_DATA_CACHE
+    if _REAL_DATA_CACHE is not None:
+        return _REAL_DATA_CACHE
+    
+    try:
+        from nilearn.datasets import fetch_icbm152_2009
+        import nibabel as nib
+        import warnings
+        
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            mni = fetch_icbm152_2009()
+            
+        gm_img = nib.load(mni.gm).get_fdata()
+        wm_img = nib.load(mni.wm).get_fdata()
+        csf_img = nib.load(mni.csf).get_fdata()
+        
+        # Downsample real 1mm anatomical masks to typical ASL resolution
+        scale = 1/3.0
+        gm = np.clip(zoom(gm_img, scale, order=1), 0, 1)
+        wm = np.clip(zoom(wm_img, scale, order=1), 0, 1)
+        csf = np.clip(zoom(csf_img, scale, order=1), 0, 1)
+        
+        _REAL_DATA_CACHE = (gm, wm, csf)
+        return _REAL_DATA_CACHE
+    except Exception as e:
+        print(f"Warning: Falling back to synthetic geometries due to: {e}")
+        return None
+
 def make_subject(subject_id, quality="good", motion_level="low"):
-    """Generate synthetic subject data with controllable quality."""
+    """Generate synthetic but highly realistic ASL data from REAL structural MNI templates."""
     rng = np.random.default_rng(hash(subject_id) % 2**31)
 
-    shape = (20, 20, 20)
-    gm = np.zeros(shape); gm[4:16, 4:16, 4:16] = 0.9; gm[7:13, 7:13, 7:13] = 0.0
-    wm = np.zeros(shape); wm[7:13, 7:13, 7:13] = 0.85
-    csf = np.zeros(shape); csf[9:11, 9:11, 9:11] = 0.7
+    real_data = get_real_mni_data()
+    if real_data:
+        gm, wm, csf = real_data
+        gm, wm, csf = gm.copy(), wm.copy(), csf.copy()
+        shape = gm.shape
+        brain_mask = ((gm + wm + csf) > 0.05).astype(float)
+    else:
+        # Fallback synthetic geometry (if internet fails)
+        shape = (60, 80, 60)
+        X, Y, Z = np.ogrid[:shape[0], :shape[1], :shape[2]]
+        cx, cy, cz = 30, 42, 30
 
-    noise = {"good": 3, "medium": 15, "noisy": 30, "terrible": 50}
-    cbf = 50.0 * gm + 20.0 * wm + rng.normal(0, noise.get(quality, 3), shape)
+        width_modifier = 1.0 + 0.15 * ((Y - cy) / 32.0)
+        rx, ry, rz = 21.0 * width_modifier, 34.0, 24.0
 
+        r_sq = ((X - cx)/rx)**2 + ((Y - cy)/ry)**2 + ((Z - cz)/rz)**2
+        brain_mask = (r_sq < 1.0).astype(float)
+
+        noise_lf = gaussian_filter(rng.normal(0, 1, shape), sigma=4.0) * 1.5
+        noise_hf = gaussian_filter(rng.normal(0, 1, shape), sigma=1.5) * 0.8
+        r_perturbed = r_sq + noise_lf + noise_hf
+
+        gm = ((r_perturbed < 1.0) & (r_perturbed > 0.55)).astype(float)
+        wm = (r_perturbed <= 0.55).astype(float)
+
+        dist_mid = np.abs(X - cx)
+        fissure = (dist_mid < 1.5) & (r_sq < 0.95)
+        wm[fissure] = 0.0
+        gm[(dist_mid >= 1.5) & (dist_mid < 3.5) & fissure] = 1.0
+
+        lv_x = np.abs(X - cx)
+        ventricles = (lv_x > 2.5) & (lv_x < 6.5) & (Y > 30) & (Y < 55) & (np.abs(Z - 30) < 6)
+        csf = ventricles.astype(float)
+        csf[fissure] = 1.0
+
+        gm[csf > 0] = 0
+        wm[csf > 0] = 0
+
+        gm[brain_mask == 0] = 0
+        wm[brain_mask == 0] = 0
+        csf[brain_mask == 0] = 0
+
+        gm = gaussian_filter(gm, sigma=0.6)
+        wm = gaussian_filter(wm, sigma=0.6)
+        csf = gaussian_filter(csf, sigma=0.6)
+
+    # 5. Generate typical physiological parameters (CBF & M0)
+    # Normal GM CBF ~ 60, Normal WM CBF ~ 22  (mL/100g/min)
+    cbf_signal = 60.0 * gm + 22.0 * wm
+    m0_signal = 1000.0 * gm + 800.0 * wm + 1200.0 * csf
+
+    noise_scale = {"good": 2.0, "medium": 8.0, "noisy": 20.0, "terrible": 40.0}
+    cbf_noise = rng.normal(0, noise_scale.get(quality, 2.0), shape) * brain_mask
+    m0_noise = rng.normal(0, 25.0, shape) * brain_mask
+    
+    cbf = cbf_signal + cbf_noise
+    m0_data = m0_signal + m0_noise
+    cbf[brain_mask == 0] = 0
+    m0_data[brain_mask == 0] = 0
+
+    # 6. Synthesize 6D Motion timeseries
     motion_scale = {"low": 0.005, "medium": 0.05, "high": 0.3}
     motion = rng.normal(0, motion_scale.get(motion_level, 0.005), (60, 6))
 
-    asl_context = ["control", "label"] * 30
-
-    data = {
+    return {
         "cbf_map": cbf,
         "gm_prob": gm,
         "wm_prob": wm,
         "csf_prob": csf,
         "motion_params": motion,
-        "asl_context": asl_context,
+        "asl_context": ["control", "label"] * 30,
         "asl_json": {
             "ArterialSpinLabelingType": "PCASL",
             "PostLabelingDelay": 1.8,
             "LabelingDuration": 1.8,
         },
         "n_volumes": 60,
-        "m0_data": rng.normal(1000, 50, shape),
+        "m0_data": m0_data,
         "m0_json": {"RepetitionTime": 6.0},
     }
-    return data
 
 
 # ──────────────────────────────────────────────────────────────

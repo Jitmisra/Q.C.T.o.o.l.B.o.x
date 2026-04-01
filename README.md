@@ -35,13 +35,13 @@ Interactive dashboard with aggregate statistics, participant ledger, artifact br
 Click any participant to see their complete quality report. Each deep dive includes **8 distinct brain visualizations** (4 more than any existing open-source ASL QC tool):
 
 **Row 1: CBF Heatmap + Tissue Mask Overlay + QEI Radar Chart**
-![CBF heatmap, tissue overlay with GM/WM boundaries, and QEI component radar chart](docs/screenshots/deep_dive_top.png)
+![CBF heatmap, tissue overlay with GM/WM boundaries, and QEI component radar chart](image/Monosnap%20QC-ToolBox%20V1.0%202026-04-01%2016-11-29.png)
 
 **Row 2: Tri-Plane View + CBF Histogram + Signal Timecourse**
-![Tri-plane CBF view (axial/coronal/sagittal), CBF distribution by tissue type, control vs label timecourse](docs/screenshots/deep_dive_middle.png)
+![Tri-plane CBF view (axial/coronal/sagittal), CBF distribution by tissue type, control vs label timecourse](image/Monosnap%20QC-ToolBox%20V1.0%202026-04-01%2016-11-38.png)
 
 **Row 3: Frame-wise Displacement + 6-Parameter Motion Plots**
-![FWD timeseries with threshold and spike markers, 3-axis translation and rotation plots](docs/screenshots/deep_dive_bottom.png)
+![FWD timeseries with threshold and spike markers, 3-axis translation and rotation plots](image/Monosnap%20QC-ToolBox%20V1.0%202026-04-01%2016-11-55.png)
 
 ---
 
@@ -80,6 +80,8 @@ pip install -e ".[dev]"
 pytest -v
 
 # Generate HTML dashboard report (8 brain visualizations per subject)
+# Note: This dynamically downloads and uses the real MNI ICBM-152 2009 
+# structural MRI template via nilearn to simulate hyper-realistic ASL data!
 python generate_report.py
 # Opens qc_report.html with batch overview + per-subject deep dive
 ```
@@ -129,6 +131,10 @@ for subject_id, data in subjects.items():
 html = generate_html_report(results, config_name="adult_3T", dataset_name="ADNI_Cohort")
 Path("qc_report.html").write_text(html)
 ```
+
+> **Note on Data Authenticity in the Prototype:**
+> To showcase the dashboard without bloating the repository with massive `.nii.gz` files, `generate_report.py` dynamically downloads the **MNI ICBM152 2009** structural MRI template via `nilearn`/`nibabel`. It extracts the **real Gray Matter, White Matter, and CSF anatomical masks** and applies simulated ASL physics (motion vectors & physiological CBF values) to them. 
+> Every graph, metric, and visualization shown in the dashboard is 100% computed by the `osipy_qc` pipeline operating on this highly realistic, structurally accurate mock data.
 
 ---
 
