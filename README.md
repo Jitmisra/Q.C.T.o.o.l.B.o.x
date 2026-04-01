@@ -5,22 +5,24 @@
 
 ---
 
-## ✨ Highlights
+## Highlights
 
 | Feature | Status |
 |---|---|
-| **8 embedded brain visualizations** per subject | ✅ |
-| **5 QC modules** (QEI, Motion, M0, SNR/sCoV, Control-Label) | ✅ |
-| **Registry-based** plug-in architecture (`@register_qc_check`) | ✅ |
-| **Graceful degradation** — never crashes on missing data | ✅ |
-| **Self-contained HTML report** — zero external dependencies | ✅ |
-| **33 unit tests** in ~0.15s | ✅ |
-| **Population-specific** YAML configs (adult 3T, neonatal CHD) | ✅ |
-| **SPA dashboard** with sidebar navigation + export | ✅ |
+| **8 embedded brain visualizations** per subject | Yes |
+| **5 QC modules** (QEI, Motion, M0, SNR/sCoV, Control-Label) | Yes |
+| **Registry-based** plug-in architecture (`@register_qc_check`) | Yes |
+| **Graceful degradation** — never crashes on missing data | Yes |
+| **Self-contained HTML report** — zero external dependencies | Yes |
+| **33 unit tests** in ~0.15s | Yes |
+| **Population-specific** YAML configs (adult 3T, neonatal CHD) | Yes |
+| **SPA dashboard** with sidebar navigation + export | Yes |
+| **Multi-organ extensibility** — kidney, placenta, preclinical configs | Planned |
+| **Clinical population configs** — stroke, elderly, tumor-aware QC | Planned |
 
 ---
 
-## 📸 Dashboard Preview
+## Dashboard Preview
 
 ### Batch Overview
 
@@ -43,7 +45,7 @@ Click any participant to see their complete quality report. Each deep dive inclu
 
 ---
 
-## 🏗️ Architecture
+## Architecture
 <img width="727" height="397" alt="Monosnap JitmisraQ C T o o l B o x 2026-03-25 15-00-44" src="https://github.com/user-attachments/assets/003b4f5d-2283-4f1b-bc70-027d1e6d25f5" />
 
 
@@ -68,7 +70,7 @@ Click any participant to see their complete quality report. Each deep dive inclu
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ```bash
 # Install
@@ -130,22 +132,22 @@ Path("qc_report.html").write_text(html)
 
 ---
 
-## 📊 8 Brain Visualizations Per Subject
+## 8 Brain Visualizations Per Subject
 
 | # | Visualization | What It Shows | Unique? |
 |---|---|---|---|
-| 1 | **CBF Heatmap** | Cerebral blood flow map with hot colormap | ✅ Clinical-grade styling |
-| 2 | **Tissue Mask Overlay** | GM/WM boundary contours on CBF | ✅ Contour-based |
-| 3 | **QEI Radar Chart** | Spider chart of PSS, DI, Neg fraction | 🆕 **Unique** |
-| 4 | **Tri-Plane View** | Axial + Coronal + Sagittal mid-slices | 🆕 **Unique** |
-| 5 | **CBF Histogram** | Distribution by tissue type (GM/WM/CSF) | ✅ 3-tissue split |
-| 6 | **Signal Timecourse** | Control vs Label mean signal over time | ✅ Color-coded |
-| 7 | **Frame-wise Displacement** | FWD over time with threshold + spikes | 🆕 **Unique** |
-| 8 | **6-Parameter Motion** | Translation (X/Y/Z) + Rotation (P/R/Y) | 🆕 **Unique** |
+| 1 | **CBF Heatmap** | Cerebral blood flow map with hot colormap | Clinical-grade styling |
+| 2 | **Tissue Mask Overlay** | GM/WM boundary contours on CBF | Contour-based |
+| 3 | **QEI Radar Chart** | Spider chart of PSS, DI, Neg fraction | **Unique to osipy-qc** |
+| 4 | **Tri-Plane View** | Axial + Coronal + Sagittal mid-slices | **Unique to osipy-qc** |
+| 5 | **CBF Histogram** | Distribution by tissue type (GM/WM/CSF) | 3-tissue split |
+| 6 | **Signal Timecourse** | Control vs Label mean signal over time | Color-coded |
+| 7 | **Frame-wise Displacement** | FWD over time with threshold + spikes | **Unique to osipy-qc** |
+| 8 | **6-Parameter Motion** | Translation (X/Y/Z) + Rotation (P/R/Y) | **Unique to osipy-qc** |
 
 ---
 
-## 🎛️ Population-Specific Configs
+## Population-Specific Configs
 
 ```python
 from osipy_qc.config import QCConfig
@@ -162,7 +164,7 @@ result = run_qc(data, config=config)
 
 ---
 
-## 🔌 Module Registry Pattern
+## Module Registry Pattern
 
 New modules plug in with a single decorator (matching osipy):
 
@@ -185,7 +187,7 @@ class TissueMaskCheck(BaseQCCheck):
 
 ---
 
-## 🆚 Comparison with Existing Tools
+## Comparison with Existing Tools
 
 | Feature | ExploreASL | ASL-MRICloud | ASLPrep | **osipy-qc** |
 |---|---|---|---|---|
@@ -195,21 +197,109 @@ class TissueMaskCheck(BaseQCCheck):
 | QEI (Dolui 2024) | No | No | Basic | **Full standalone** |
 | Auto PASS/WARN/FAIL | No | Partial | No | **Yes** |
 | Brain Visualizations | Limited | 4 | None | **8** |
-| Tri-plane view | ❌ | ❌ | ❌ | ✅ |
-| FWD timeseries | ❌ | ❌ | ❌ | ✅ |
-| 6-param motion plots | ❌ | ❌ | ❌ | ✅ |
-| QEI radar chart | ❌ | ❌ | ❌ | ✅ |
-| SPA dashboard | ❌ | ❌ | ❌ | ✅ |
-| Sidebar navigation | ❌ | ❌ | ❌ | ✅ |
-| Export report | ❌ | ❌ | ❌ | ✅ |
-| Graceful degradation | ❌ | ❌ | ❌ | ✅ |
-| Registry pattern | ❌ | ❌ | ❌ | ✅ |
-| Population configs | ❌ | ❌ | ❌ | ✅ |
+| Tri-plane view | No | No | No | Yes |
+| FWD timeseries | No | No | No | Yes |
+| 6-param motion plots | No | No | No | Yes |
+| QEI radar chart | No | No | No | Yes |
+| SPA dashboard | No | No | No | Yes |
+| Sidebar navigation | No | No | No | Yes |
+| Export report | No | No | No | Yes |
+| Graceful degradation | No | No | No | Yes |
+| Registry pattern | No | No | No | Yes |
+| Population configs | No | No | No | Yes |
+| Multi-organ extension | No | No | No | Planned |
+| Clinical population QC | No | No | No | Planned |
 | Test suite | Unknown | 0 | Unknown | **33** |
 
 ---
 
-## 📁 Project Structure
+## Multi-Organ Extensibility: Kidney, Placenta, and Preclinical ASL
+
+ASL perfusion imaging is increasingly used beyond the brain — in kidneys, placenta, and small-animal studies. The QC rules that work for the brain break down for other organs because the blood flow ranges, tissue types, motion sources, and labeling methods are all different.
+
+The registry architecture makes organ-specific extension straightforward. Each organ gets its own YAML config that selects which QC modules to run:
+
+| What Changes | Brain | Kidney | Placenta | Preclinical (rodent) |
+|---|---|---|---|---|
+| Blood flow range | 50-70 mL/100g/min (GM) | 250-350 mL/100g/min (cortex) | 100-200 mL/100g/min | 100-200 mL/100g/min (mouse cortex) |
+| Tissue types | GM / WM / CSF | Cortex / medulla only | No standard tissue atlas | Mouse brain atlas (Allen) |
+| What causes motion | Head movement | Breathing + heartbeat | Fetal + maternal movement | Depends on anesthesia depth |
+| Labeling method | PCASL (standard) | FAIR or PCASL (PARENCHIMA) | Velocity-selective ASL | CASL with dedicated coil |
+| Biggest artifact risk | Control-label swap | Breathing ghosting | Uterine motion | RF heating (SAR), B0 inhomogeneity |
+
+**Example kidney config:**
+
+```yaml
+# configs/kidney_1_5T.yaml
+organ: kidney
+labeling: FAIR
+expected_cortex_cbf_range: [200, 450]  # mL/100g/min
+expected_medulla_cbf_range: [30, 120]
+motion_source: respiratory
+qei_applicable: false  # QEI not validated for kidney
+primary_checks:
+  - cortex_medulla_contrast    # cortex/medulla ratio should be 3:1 to 5:1
+  - respiratory_motion_score   # how well did breathing correction work?
+  - t1_hematocrit_correction   # important for kidney disease patients
+  - snr_cov                    # reusable from brain module
+disabled_checks:
+  - control_label              # BIDS ordering not relevant for FAIR
+  - qei                        # brain-specific metric
+```
+
+**Planned organ-specific QC modules:**
+
+| Module | Organ | What It Checks | Reference |
+|---|---|---|---|
+| `cortex_medulla_contrast` | Kidney | Perfusion ratio between cortex and medulla (expected 3:1-5:1) | PARENCHIMA consensus (Nery et al., 2020) |
+| `respiratory_motion_score` | Kidney / Placenta | Breathing-induced subtraction errors, adapted FWD for abdominal displacement | Robson et al., 2009 |
+| `t1_hematocrit_correction` | Kidney | Flags when blood T1 deviates >15% from assumed default due to anemia | Li et al., 2017 |
+| `placental_perfusion_check` | Placenta | Mean perfusion within expected range, fetal motion detection | Mora Alvarez et al., 2024 |
+| `preclinical_sar_check` | Rodent | RF labeling power (B1) within safe 4-5 uT range at 7T+ | Hirschler et al., 2018 |
+
+Every new organ module uses `@register_qc_check` — no changes to the pipeline, verdict logic, or HTML report are needed.
+
+---
+
+## QC Challenges for Clinical Populations
+
+Running automated QC on clinical data is harder than on healthy volunteers because the disease itself changes the same metrics the QC system uses to detect problems:
+
+- A **stroke** creates a brain region with zero blood flow — but so does a labeling failure.
+- A **brain tumor** causes extremely high local blood flow — but so does an intravascular artifact.
+- A patient with **Alzheimer's** has genuinely low overall brain perfusion — but the QC system might flag this as a bad scan.
+
+The toolbox addresses this with population-specific configs and lesion-mask-aware computation:
+
+| Population | The Problem | Why Normal Thresholds Break | What the Toolbox Does |
+|---|---|---|---|
+| **Stroke** | Zero-CBF regions from real ischemia | Negative voxel metrics say "scan failed" even though low flow is real | Compute metrics contralateral to the lesion; use asymmetry index |
+| **Alzheimer's / Dementia** | Widespread low perfusion | Global CBF drops below healthy adult ranges | Age-adjusted config (`elderly_3T.yaml`) with lower CBF thresholds |
+| **Brain Tumors** | Very high local perfusion from tumor | Extreme CBF inflates variance; spatial CoV looks bad | If lesion mask is provided, exclude tumor region from QC |
+| **Neonatal / Pediatric** | Different baseline CBF, smaller brain | Adult thresholds (50-70) don't apply to neonates (~20-50) | Already built: `neonatal_chd.yaml` with adjusted thresholds |
+
+**Config-driven strategy:**
+
+```python
+# Example: Running QC on a stroke cohort
+from osipy_qc import run_qc
+from osipy_qc.config import QCConfig
+
+config = QCConfig.from_yaml("configs/stroke_3T.yaml")
+result = run_qc({
+    "cbf_map": cbf_data,
+    "gm_prob": gm_map,
+    "wm_prob": wm_map,
+    "lesion_mask": stroke_lesion_mask,  # optional but recommended
+}, config=config)
+# Metrics computed contralateral to lesion; verdict uses relaxed thresholds
+```
+
+For clinical populations, the config can set `strict_mode: false`, which prefers WARN over FAIL for borderline cases — encouraging manual review rather than automated exclusion of valuable clinical data.
+
+---
+
+## Project Structure
 
 ```
 osipy-qc/
@@ -238,12 +328,12 @@ osipy-qc/
 ├── demo.py                  # Terminal demo (5 scenarios)
 ├── generate_report.py       # HTML report generation (8 brain visuals)
 ├── pyproject.toml            # PEP 621 packaging (ruff, mypy, pytest)
-└── .github/workflows/ci.yml # CI across Python 3.10–3.12
+└── .github/workflows/ci.yml # CI across Python 3.10-3.12
 ```
 
 ---
 
-## 🧪 Test Suite
+## Test Suite
 
 ```bash
 pytest -v
@@ -259,21 +349,23 @@ pytest -v
 
 ---
 
-## 🔑 Key Design Decisions
+## Key Design Decisions
 
 | Decision | Rationale |
 |---|---|
 | `@register_qc_check(name)` decorator | Mirrors osipy's `@register_quantification_model(name)` convention |
 | Pure numpy (no scipy) | osipy bans scipy for GPU compatibility via `xp = get_array_module()` |
-| YAML config per population | Neonatal CBF ~20–50 vs adult ~55 mL/100g/min — one threshold set cannot serve both |
-| PSCBF = 50·GM + 20·WM | Actual CBF units per Dolui 2024 (not 2.5·GM + 1·WM) |
+| YAML config per population | Neonatal CBF ~20-50 vs adult ~55 mL/100g/min — one threshold set cannot serve both |
+| PSCBF = 50*GM + 20*WM | Actual CBF units per Dolui 2024 (not 2.5*GM + 1*WM) |
 | Geometric mean in QEI | One catastrophic component collapses the score (fail-fast) |
 | Standalone HTML report | Zero-dependency SPA dashboard matching the Figma mockup |
 | 8 brain visualizations | 4 matching clinical standards + 4 unique (tri-plane, FWD, motion params, QEI radar) |
+| Multi-organ YAML configs | Brain, kidney, placenta use different CBF ranges and motion sources |
+| strict_mode for clinical data | Clinical populations need WARN not FAIL for pathology-mimicking artifacts |
 
 ---
 
-## 📚 References
+## References
 
 | Paper | Used for |
 |---|---|
@@ -282,15 +374,17 @@ pytest -v
 | [Mutsaerts et al. 2017, JCBFM](https://doi.org/10.1177/0271678X16683690) | Spatial CoV reference ranges |
 | [Alsop et al. 2015, MRM](https://doi.org/10.1002/mrm.25197) | ASL White Paper (M0 TR) |
 | [Clement et al. 2022, Sci Data](https://doi.org/10.1038/s41597-022-01615-9) | ASL-BIDS specification |
-| [Mora Álvarez et al. 2024, MAGMA](https://doi.org/10.1007/s10334-024-01188-1) | Neonatal/placental CBF ranges |
+| [Mora Alvarez et al. 2024, MAGMA](https://doi.org/10.1007/s10334-024-01188-1) | Neonatal/placental CBF ranges |
+| [Zhao et al. 2023, MRM](https://doi.org/10.1002/mrm.29609) | Body ASL review (kidney, placenta) |
+| [Nery et al. 2020, PARENCHIMA](https://doi.org/10.1007/s10334-019-00823-y) | Renal ASL consensus |
 
 ---
 
-## 👤 Author
+## Author
 
-**Agnik Misra** — GSoC 2025 @ Apache (Committer) · LFX @ O-RAN SC
-[GitHub](https://github.com/Jitmisra) · [LinkedIn](https://linkedin.com/in/agnikmisra)
+**Agnik Misra** — GSoC 2025 @ Apache (Committer), LFX @ O-RAN SC
+[GitHub](https://github.com/Jitmisra) | [LinkedIn](https://linkedin.com/in/agnikmisra)
 
-## 📄 License
+## License
 
 Apache 2.0 — matching osipy's license.
