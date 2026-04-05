@@ -215,6 +215,14 @@ python scripts/derive_thresholds.py \
 # Outputs: PNG plots, threshold_report.md, threshold_report.json
 ```
 
+### Example Threshold Plots (n=20 cohort, MNI ICBM152 data)
+
+| QEI | Spatial CoV | SNR |
+|-----|-------------|-----|
+| ![QEI threshold derivation](image/qei_thresholds.png) | ![Spatial CoV threshold derivation](image/spatial_cov_thresholds.png) | ![SNR threshold derivation](image/snr_thresholds.png) |
+
+*Red: GMM cut · Orange dashed: KDE cut · Blue dotted: IQR fences · Green: ★ Recommended threshold*
+
 ---
 
 ## Population-Specific Configs
