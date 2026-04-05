@@ -100,3 +100,106 @@ def run_qc(
         "modules_skipped": skipped,
         "config_profile": config.profile_name,
     }
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Batch export utilities
+# ──────────────────────────────────────────────────────────────────────────────
+
+_CSV_COLUMNS = [
+    "subject_id", "overall_verdict", "qei", "pss", "di", "neg_fraction",
+    "snr", "spatial_cov", "mean_fwd", "max_fwd", "mean_gm_cbf",
+    "flagged", "flags",
+]
+
+
+def _extract_flat_row(result: dict[str, Any]) -> dict[str, Any]:
+    """Flatten a single run_qc result dict into a CSV-friendly row."""
+    mods = result.get("modules", {})
+
+    # QEI components
+    qei_m = mods.get("qei", {}).get("metrics", {})
+    # SNR/CoV
+    snr_m = mods.get("snr_cov", {}).get("metrics", {})
+    # Motion
+    mot_m = mods.get("motion", {}).get("metrics", {})
+
+    verdict = result.get("overall_verdict", "UNKNOWN")
+    flags_list: list[str] = []
+    for name, mod in mods.items():
+        if mod.get("verdict") == "FAIL":
+            flags_list.append(f"{name}=FAIL")
+
+    return {
+        "subject_id": result.get("subject_id", "unknown"),
+        "overall_verdict": verdict,
+        "qei": qei_m.get("qei", ""),
+        "pss": qei_m.get("structural_similarity", ""),
+        "di": qei_m.get("spatial_variability", ""),
+        "neg_fraction": qei_m.get("negative_voxel_fraction", ""),
+        "snr": snr_m.get("snr", ""),
+        "spatial_cov": snr_m.get("spatial_cov_pct", ""),
+        "mean_fwd": mot_m.get("mean_fwd", ""),
+        "max_fwd": mot_m.get("max_fwd", ""),
+        "mean_gm_cbf": snr_m.get("mean_gm_cbf", ""),
+        "flagged": "1" if verdict == "FAIL" else "0",
+        "flags": "; ".join(flags_list) if flags_list else "",
+    }
+
+
+def export_batch_csv(
+    results: list[dict[str, Any]],
+    output_path: str | object,
+) -> None:
+    """Export batch QC results to a CSV file.
+
+    Parameters
+    ----------
+    results : list[dict]
+        List of run_qc() output dicts (each must have 'subject_id').
+    output_path : str or Path
+        Path to write the CSV file.
+    """
+    import csv
+    from pathlib import Path
+
+    path = Path(output_path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+
+    rows = [_extract_flat_row(r) for r in results]
+
+    with open(path, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=_CSV_COLUMNS)
+        writer.writeheader()
+        writer.writerows(rows)
+
+
+def export_batch_json(
+    results: list[dict[str, Any]],
+    output_path: str | object,
+) -> None:
+    """Export batch QC results to a JSON file.
+
+    Parameters
+    ----------
+    results : list[dict]
+        List of run_qc() output dicts (each must have 'subject_id').
+    output_path : str or Path
+        Path to write the JSON file.
+    """
+    import json
+    from pathlib import Path
+
+    path = Path(output_path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+
+    # Build structured output
+    payload = {
+        "n_subjects": len(results),
+        "subjects": {},
+    }
+    for r in results:
+        sid = r.get("subject_id", "unknown")
+        payload["subjects"][sid] = _extract_flat_row(r)
+
+    path.write_text(json.dumps(payload, indent=2, default=str), encoding="utf-8")

@@ -514,3 +514,14 @@ out_path = Path("qc_report.html")
 out_path.write_text(html)
 print(f"\n  Report saved to: {out_path.resolve()}")
 print(f"  Open in browser: file://{out_path.resolve()}")
+
+# Export batch CSV + JSON (cohort-level data for threshold derivation)
+from osipy_qc.pipeline import export_batch_csv, export_batch_json
+
+csv_path = Path("qc_output/qc_results.csv")
+json_path = Path("qc_output/qc_results.json")
+export_batch_csv(results, csv_path)
+export_batch_json(results, json_path)
+print(f"  CSV export:  {csv_path.resolve()}")
+print(f"  JSON export: {json_path.resolve()}")
+

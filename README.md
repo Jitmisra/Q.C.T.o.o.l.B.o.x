@@ -13,11 +13,14 @@
 | Feature | Status |
 |---|---|
 | **8 embedded brain visualizations** per subject | Yes |
-| **5 QC modules** (QEI, Motion, M0, SNR/sCoV, Control-Label) | Yes |
+| **6 QC modules** (QEI, Motion, M0, SNR/sCoV, Control-Label, Renal stub) | Yes |
 | **Registry-based** plug-in architecture (`@register_qc_check`) | Yes |
 | **Graceful degradation** — never crashes on missing data | Yes |
 | **Self-contained HTML report** — zero external dependencies | Yes |
-| **33 unit tests** in ~0.15s | Yes |
+| **Batch CSV + JSON export** — cohort-level results | Yes |
+| **Cohort threshold derivation** — IQR + GMM + KDE (3 methods) | Yes |
+| **Real MNI ICBM152 anatomical data** — not synthetic cubes | Yes |
+| **45 unit tests** in ~0.4s | Yes |
 | **Population-specific** YAML configs (adult 3T, neonatal CHD) | Yes |
 | **SPA dashboard** with sidebar navigation + export | Yes |
 | **Multi-organ extensibility** — kidney, placenta, preclinical configs | Planned |
@@ -160,6 +163,60 @@ Path("qc_report.html").write_text(html)
 
 ---
 
+## Batch Export (CSV + JSON)
+
+`generate_report.py` automatically exports cohort-level results alongside the HTML dashboard:
+
+```
+qc_output/
+├── qc_results.csv      # Per-subject metrics for downstream analysis
+└── qc_results.json     # Structured JSON for programmatic access
+```
+
+CSV columns: `subject_id, overall_verdict, qei, pss, di, neg_fraction, snr, spatial_cov, mean_fwd, max_fwd, mean_gm_cbf, flagged, flags`
+
+```python
+from osipy_qc import export_batch_csv, export_batch_json
+
+export_batch_csv(results, "qc_output/qc_results.csv")
+export_batch_json(results, "qc_output/qc_results.json")
+```
+
+---
+
+## Cohort Threshold Derivation (3 Methods)
+
+Automatically derive data-driven pass/fail thresholds from cohort data using **three complementary statistical methods** (more than any existing tool):
+
+| Method | How It Works | Assumptions |
+|---|---|---|
+| **IQR Fences** | Q1 − 1.5×IQR / Q3 + 1.5×IQR (Tukey, 1977) | Nonparametric, robust |
+| **GMM Valley** | 2-component Gaussian Mixture; threshold at PDF crossing | Assumes bimodal |
+| **KDE Local Min** | Kernel density estimation; deepest valley between peaks | No parametric assumptions |
+
+```python
+from osipy_qc.threshold import compare_methods, plot_threshold_comparison
+import numpy as np
+
+# Example: derive QEI thresholds from a cohort
+qei_scores = np.array([0.92, 0.88, 0.91, 0.45, 0.38, ...])
+report = compare_methods(qei_scores, "QEI", higher_is_better=True)
+print(f"Recommended: {report.recommended_threshold:.3f} ({report.recommended_method})")
+
+# Generate publication-quality comparison plot
+plot_threshold_comparison(qei_scores, "QEI", "output/qei_thresholds.png")
+```
+
+CLI script:
+```bash
+python scripts/derive_thresholds.py \
+    --csv qc_output/qc_results.csv \
+    --output qc_output/threshold_analysis
+# Outputs: PNG plots, threshold_report.md, threshold_report.json
+```
+
+---
+
 ## Population-Specific Configs
 
 ```python
@@ -216,13 +273,15 @@ class TissueMaskCheck(BaseQCCheck):
 | QEI radar chart | No | No | No | Yes |
 | SPA dashboard | No | No | No | Yes |
 | Sidebar navigation | No | No | No | Yes |
-| Export report | No | No | No | Yes |
+| Batch CSV/JSON export | Partial | No | No | **Yes** |
+| Cohort threshold derivation | No | No | No | **3 methods (IQR+GMM+KDE)** |
 | Graceful degradation | No | No | No | Yes |
 | Registry pattern | No | No | No | Yes |
 | Population configs | No | No | No | Yes |
+| Real anatomical data | N/A | N/A | N/A | **MNI ICBM152** |
 | Multi-organ extension | No | No | No | Planned |
 | Clinical population QC | No | No | No | Planned |
-| Test suite | Unknown | 0 | Unknown | **33** |
+| Test suite | Unknown | 0 | Unknown | **45** |
 
 ---
 
@@ -321,25 +380,30 @@ osipy-qc/
 │   ├── registry.py          # @register_qc_check decorator (osipy pattern)
 │   ├── verdict.py           # PASS/WARN/FAIL/UNKNOWN engine
 │   ├── config.py            # YAML config + pydantic-style validation
-│   ├── pipeline.py          # Orchestrator with graceful degradation
+│   ├── pipeline.py          # Orchestrator + batch CSV/JSON export
 │   ├── reporting.py         # Standalone HTML dashboard (Figma-spec)
+│   ├── threshold.py         # Cohort thresholds (IQR + GMM + KDE)
 │   └── modules/
 │       ├── qei.py           # QEI (Dolui 2024) — anchor metric
 │       ├── motion.py        # FWD + DVARS (Power 2012)
 │       ├── control_label.py # BIDS ordering + swap detection
 │       ├── m0_check.py      # M0 saturation, TR, BG suppression
-│       └── snr_cov.py       # SNR, spatial CoV, histogram
+│       ├── snr_cov.py       # SNR, spatial CoV, histogram
+│       └── renal_cortex_medulla.py  # Kidney QC (stub)
 ├── configs/
 │   ├── adult_3T.yaml        # Default adult thresholds
 │   └── neonatal_chd.yaml    # Neonatal population profile
+├── scripts/
+│   └── derive_thresholds.py # CLI: cohort threshold derivation
 ├── tests/
 │   ├── test_registry.py     # Registry pattern tests
 │   ├── test_qei.py          # QEI on synthetic data (all 3 components)
 │   ├── test_verdict.py      # Verdict logic + graceful degradation
-│   └── test_motion.py       # FWD, DVARS, rotation projection
+│   ├── test_motion.py       # FWD, DVARS, rotation projection
+│   └── test_threshold.py    # IQR, GMM, KDE threshold derivation
 ├── docs/screenshots/        # Dashboard screenshots
 ├── demo.py                  # Terminal demo (5 scenarios)
-├── generate_report.py       # HTML report generation (8 brain visuals)
+├── generate_report.py       # HTML + CSV + JSON generation (8 brain visuals)
 ├── pyproject.toml            # PEP 621 packaging (ruff, mypy, pytest)
 └── .github/workflows/ci.yml # CI across Python 3.10-3.12
 ```
@@ -350,15 +414,16 @@ osipy-qc/
 
 ```bash
 pytest -v
-# 33 tests, ~0.15s
+# 45 tests, ~0.4s
 ```
 
-33 tests covering:
+45 tests covering:
 - **Registry pattern** — module discovery, instantiation, unknown-check errors, `can_run()` with partial data
 - **QEI components** — PSS, DI, negative fraction, geometric mean collapse, full pipeline
 - **Verdict logic** — fail-fast aggregation, UNKNOWN handling, threshold comparison
 - **Graceful degradation** — pipeline with complete and partial inputs
 - **Motion** — FWD, DVARS, rotation-to-mm, stationary subjects, high-motion detection
+- **Threshold derivation** — IQR fences, GMM bimodal split, KDE valley, edge cases, comparison API
 
 ---
 
