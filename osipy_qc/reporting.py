@@ -589,14 +589,14 @@ def generate_html_report(
         """
     if not artifact_html:
         artifact_html = "<div style='color:#889299;font-size:13px;padding:20px 0;'>No artifacts detected.</div>"
-        
+
     # Cohort Threshold Analysis Plots
     cohort_html = ""
     if cohort_plots:
         images_html = ""
         for metric, b64 in cohort_plots.items():
             images_html += f'<div style="text-align:center; padding:10px; background:{COLORS["bg"]}; border-radius:12px;"><img src="{b64}" style="max-width:100%; height:auto; border-radius:8px"></div>'
-            
+
         cohort_html = f"""
         <div class="card" style="margin-top: 24px;">
             <div class="card-header" style="border-bottom: 1px solid {COLORS['border']}; padding-bottom:16px; margin-bottom:16px;">
@@ -1003,7 +1003,7 @@ result = run_qc(data)</code></pre>
                             </div>
                         </div>
                     </div>
-                    
+
                     {cohort_html}
                 </div>
             </div>
