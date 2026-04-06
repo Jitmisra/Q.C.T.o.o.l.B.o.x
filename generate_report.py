@@ -441,7 +441,6 @@ def make_subject(subject_id, quality="good", motion_level="low"):
 # ──────────────────────────────────────────────────────────────
 # Main execution
 # ──────────────────────────────────────────────────────────────
-
 subjects = [
     ("sub-01", "good",     "low"),
     ("sub-02", "good",     "medium"),
@@ -451,6 +450,18 @@ subjects = [
     ("sub-06", "terrible", "high"),
     ("sub-07", "good",     "low"),
     ("sub-08", "medium",   "medium"),
+    ("sub-09", "good",     "low"),
+    ("sub-10", "noisy",    "medium"),
+    ("sub-11", "good",     "low"),
+    ("sub-12", "medium",   "high"),
+    ("sub-13", "good",     "low"),
+    ("sub-14", "noisy",    "low"),
+    ("sub-15", "good",     "medium"),
+    ("sub-16", "terrible", "high"),
+    ("sub-17", "good",     "low"),
+    ("sub-18", "medium",   "low"),
+    ("sub-19", "good",     "low"),
+    ("sub-20", "noisy",    "high"),
 ]
 
 config = QCConfig.from_yaml("configs/adult_3T.yaml")
@@ -503,11 +514,39 @@ for sid, quality, motion in subjects:
 
     results.append(result)
 
+# Extract flat metrics for thresholding
+from osipy_qc.pipeline import _extract_flat_row
+from osipy_qc.threshold import plot_threshold_comparison
+
+cohort_plots = {}
+metric_mapping = {
+    "qei": ("QEI", True),
+    "snr": ("Signal-to-Noise Ratio", True),
+    "spatial_cov": ("Spatial CoV (%)", False),
+}
+
+if len(results) >= 10:
+    for key, (label, is_higher_better) in metric_mapping.items():
+        vals = []
+        for r in results:
+            flat = _extract_flat_row(r)
+            try:
+                vals.append(float(flat[key]))
+            except ValueError:
+                pass
+        
+        arr = np.array(vals)
+        if len(arr) >= 10:
+            buf = io.BytesIO()
+            plot_threshold_comparison(arr, label, buf, higher_is_better=is_higher_better)
+            cohort_plots[key] = f"data:image/png;base64,{base64.b64encode(buf.getvalue()).decode()}"
+
 # Generate report
 html = generate_html_report(
     results,
     config_name="adult_3T",
     dataset_name="ADNI_Cohort_Demo_2024",
+    cohort_plots=cohort_plots,
 )
 
 out_path = Path("qc_report.html")
@@ -524,4 +563,5 @@ export_batch_csv(results, csv_path)
 export_batch_json(results, json_path)
 print(f"  CSV export:  {csv_path.resolve()}")
 print(f"  JSON export: {json_path.resolve()}")
+
 

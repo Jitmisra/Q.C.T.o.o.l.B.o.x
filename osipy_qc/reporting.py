@@ -521,7 +521,12 @@ def _progress(val: float, max_val: float, color: str, width: str = "100%", heigh
     </div>
     """
 
-def generate_html_report(results: list[dict[str, Any]], config_name: str = "default", dataset_name: str = "Dataset") -> str:
+def generate_html_report(
+    results: list[dict[str, Any]],
+    config_name: str = "default",
+    dataset_name: str = "Dataset",
+    cohort_plots: dict[str, str] | None = None,
+) -> str:
     n_total = len(results)
     verdicts = [r.get("overall_verdict", "UNKNOWN") for r in results]
     n_pass = verdicts.count("PASS")
@@ -584,6 +589,28 @@ def generate_html_report(results: list[dict[str, Any]], config_name: str = "defa
         """
     if not artifact_html:
         artifact_html = "<div style='color:#889299;font-size:13px;padding:20px 0;'>No artifacts detected.</div>"
+        
+    # Cohort Threshold Analysis Plots
+    cohort_html = ""
+    if cohort_plots:
+        images_html = ""
+        for metric, b64 in cohort_plots.items():
+            images_html += f'<div style="text-align:center; padding:10px; background:{COLORS["bg"]}; border-radius:12px;"><img src="{b64}" style="max-width:100%; height:auto; border-radius:8px"></div>'
+            
+        cohort_html = f"""
+        <div class="card" style="margin-top: 24px;">
+            <div class="card-header" style="border-bottom: 1px solid {COLORS['border']}; padding-bottom:16px; margin-bottom:16px;">
+                <div class="card-title">Cohort Threshold Analysis (Data-Driven)</div>
+                <div style="font-size:11px; background:{COLORS['pass_bg']}; color:{COLORS['pass']}; padding:4px 10px; border-radius:12px; font-weight:600">3 STATISTICAL METHODS</div>
+            </div>
+            <div style="font-size:13px; color:{COLORS['text_muted']}; margin-bottom:16px;">
+                Comparing Kernel Density Estimation (KDE), Gaussian Mixture Models (GMM), and Tukey IQR fences to dynamically derive quality cutoffs for this specific {n_total}-subject cohort.
+            </div>
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:16px;">
+                {images_html}
+            </div>
+        </div>
+        """
 
     # Sidebar participant list
     sidebar_participants = ""
@@ -976,6 +1003,8 @@ result = run_qc(data)</code></pre>
                             </div>
                         </div>
                     </div>
+                    
+                    {cohort_html}
                 </div>
             </div>
 
