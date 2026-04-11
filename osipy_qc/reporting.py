@@ -1102,6 +1102,17 @@ result = run_qc(data)</code></pre>
                         </div>
                     </div>
 
+                    <!-- Data Authenticity Note -->
+                    <div style="margin-top:20px; padding:16px 20px; background:linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%); border-radius:12px; border:1px solid #FDE68A; display:flex; align-items:flex-start; gap:12px;">
+                        <div style="font-size:18px; flex-shrink:0; margin-top:2px;">&#128300;</div>
+                        <div>
+                            <div style="font-weight:700; font-size:13px; color:#92400E; margin-bottom:6px;">Note on Data Authenticity</div>
+                            <div style="font-size:12px; color:#78350F; line-height:1.7;">
+                                To showcase the dashboard without bloating the repository with massive <code style="background:#FDE68A; padding:1px 4px; border-radius:3px; font-size:11px;">.nii.gz</code> files, <code style="background:#FDE68A; padding:1px 4px; border-radius:3px; font-size:11px;">generate_report.py</code> dynamically downloads the <strong>MNI ICBM152 2009</strong> structural MRI template via <em>nilearn/nibabel</em>. It extracts the real Gray Matter, White Matter, and CSF anatomical masks and applies simulated ASL physics (motion vectors &amp; physiological CBF values) to them. Every graph, metric, and visualization shown in this dashboard is <strong>100% computed</strong> by the <em>osipy_qc</em> pipeline operating on this highly realistic, structurally accurate data.
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
