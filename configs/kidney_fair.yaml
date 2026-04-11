@@ -1,0 +1,50 @@
+# Kidney FAIR ASL — Population-Specific Configuration
+#
+# FAIR (Flow-sensitive Alternating Inversion Recovery) is the most
+# common labeling method for renal ASL. The expected perfusion values
+# and QC thresholds differ significantly from brain PCASL.
+#
+# References:
+#   Nery F et al. (2020) MAGMA — Renal ASL consensus recommendations
+#   Li LP et al. (2017) — Renal perfusion reference ranges
+#   Mora Álvarez MG et al. (2024) MAGMA — Multi-organ ASL challenges
+
+profile_name: kidney_fair
+description: >
+  Thresholds for renal FAIR ASL acquisitions.
+  Disables brain-specific modules (motion FWD is computed differently
+  for single-slice kidney acquisitions). Enables renal cortex-medulla check.
+
+modules:
+  qei:
+    enabled: false      # QEI is brain-specific (uses GM/WM/CSF)
+
+  motion:
+    enabled: true
+    thresholds:
+      # Respiratory motion dominates in kidney scans
+      fwd_fail_above: 3.0
+      fwd_warn_above: 1.5
+
+  control_label:
+    enabled: true
+    thresholds: {}
+
+  m0_check:
+    enabled: true
+    thresholds:
+      tr_fail_below: 4.0    # Kidney M0 needs longer TR
+      tr_warn_below: 6.0
+      saturation_pct_fail: 5.0
+
+  snr_cov:
+    enabled: false      # sCoV reference values are brain-specific
+
+  renal_cortex_medulla:
+    enabled: true
+    thresholds:
+      # Nery et al. (2020) PARENCHIMA consensus
+      ratio_fail_below: 2.0     # CKD stage IV-V territory
+      ratio_warn_below: 3.0     # Below healthy 3:1 to 5:1
+      cortex_fail_below: 100.0  # Severely reduced cortical perfusion
+      cortex_warn_above: 450.0  # Possible vascular artifact

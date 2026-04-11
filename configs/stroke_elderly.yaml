@@ -1,0 +1,62 @@
+# Stroke / Elderly Population — Relaxed Configuration
+#
+# Clinical populations (stroke, elderly, neurodegenerative) produce
+# inherently noisier ASL images due to:
+#   - Prolonged arterial transit times (ATT > 2s)
+#   - Increased patient motion
+#   - Lower baseline CBF
+#   - Potential hemispheric asymmetry (stroke)
+#
+# This config uses WARN instead of FAIL for borderline cases,
+# encouraging manual review over automated exclusion of
+# valuable clinical data.
+#
+# References:
+#   Alsop et al. (2015) MRM — recommends PLD 2000ms for age >70
+#   Mutsaerts et al. (2017) JCBFM — sCoV 56.9 ± 13.2% in 186 elderly
+#   Power et al. (2012) NeuroImage — FWD; elderly require relaxed cutoff
+
+profile_name: stroke_elderly
+description: >
+  Relaxed thresholds for stroke and elderly populations (age >70).
+  Uses WARN-preferred logic to avoid discarding clinically valuable
+  scans that would fail under healthy-adult thresholds.
+  strict_mode: false means borderline cases get WARN instead of FAIL.
+
+strict_mode: false
+
+modules:
+  qei:
+    enabled: true
+    thresholds:
+      # Relaxed: clinical images have lower QEI due to transit artifacts
+      fail_below: 0.20    # Only reject truly unusable scans
+      warn_below: 0.35    # Wider "acceptable" window for clinical data
+
+  motion:
+    enabled: true
+    thresholds:
+      # Elderly patients move more; standard 0.5mm is too strict
+      fwd_fail_above: 2.5   # Only flag extreme motion
+      fwd_warn_above: 1.2   # Relaxed from 0.5mm (Power 2012)
+
+  control_label:
+    enabled: true
+    thresholds: {}
+
+  m0_check:
+    enabled: true
+    thresholds:
+      tr_fail_below: 2.0
+      tr_warn_below: 4.0
+      saturation_pct_fail: 5.0
+
+  snr_cov:
+    enabled: true
+    thresholds:
+      # Mutsaerts 2017: mean sCoV = 56.9 ± 13.2% in elderly cohort
+      # So ~83% = mean + 2*SD is a reasonable warn threshold
+      scov_fail_above: 120.0   # Only reject extreme heterogeneity
+      scov_warn_above: 83.0    # Mean + 2*SD from Mutsaerts 2017
+      neg_frac_fail_above: 0.30  # Relaxed from 0.20
+      neg_frac_warn_above: 0.15  # Relaxed from 0.10

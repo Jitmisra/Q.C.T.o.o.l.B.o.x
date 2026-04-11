@@ -118,9 +118,12 @@ def test_full_pipeline_all_inputs():
 
     result = run_qc(data)
 
-    # No modules should be UNKNOWN (except stubs)
-    stub_modules = {"renal_cortex_medulla"}  # stub: not yet implemented
+    # Modules with brain data should run; renal needs kidney-specific inputs
+    # so it correctly returns UNKNOWN (graceful degradation, not a stub)
+    brain_modules = {"qei", "snr_cov", "motion", "control_label", "m0_check"}
     for name, mod in result["modules"].items():
-        if name in stub_modules:
-            continue
-        assert mod["verdict"] != "UNKNOWN", f"{name} should not be UNKNOWN"
+        if name in brain_modules:
+            assert mod["verdict"] != "UNKNOWN", f"{name} should not be UNKNOWN"
+    # Renal module should be UNKNOWN because no kidney masks were provided
+    assert result["modules"]["renal_cortex_medulla"]["verdict"] == "UNKNOWN"
+

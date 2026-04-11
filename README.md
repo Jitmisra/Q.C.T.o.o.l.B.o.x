@@ -13,17 +13,18 @@
 | Feature | Status |
 |---|---|
 | **8 embedded brain visualizations** per subject | Yes |
-| **6 QC modules** (QEI, Motion, M0, SNR/sCoV, Control-Label, Renal stub) | Yes |
+| **6 QC modules** (QEI, Motion, M0, SNR/sCoV, Control-Label, **Renal**) | Yes |
 | **Registry-based** plug-in architecture (`@register_qc_check`) | Yes |
 | **Graceful degradation** — never crashes on missing data | Yes |
 | **Self-contained HTML report** — zero external dependencies | Yes |
 | **Batch CSV + JSON export** — cohort-level results | Yes |
 | **Cohort threshold derivation** — IQR + GMM + KDE (3 methods) | Yes |
 | **Real MNI ICBM152 anatomical data** — not synthetic cubes | Yes |
-| **45 unit tests** in ~0.4s | Yes |
-| **Population-specific** YAML configs (adult 3T, neonatal CHD) | Yes |
+| **53 unit tests** in ~0.3s | Yes |
+| **4 population configs** (adult 3T, neonatal, stroke/elderly, kidney) | Yes |
 | **SPA dashboard** with sidebar navigation + export | Yes |
-| **Multi-organ extensibility** — kidney, placenta, preclinical configs | Planned |
+| **Literature review** — 7 key papers documented | Yes |
+| **Multi-organ extensibility** — kidney functional, placenta planned | Yes |
 | **Clinical population configs** — stroke, elderly, tumor-aware QC | Planned |
 
 ---
@@ -289,7 +290,7 @@ class TissueMaskCheck(BaseQCCheck):
 | Real anatomical data | N/A | N/A | N/A | **MNI ICBM152** |
 | Multi-organ extension | No | No | No | Planned |
 | Clinical population QC | No | No | No | Planned |
-| Test suite | Unknown | 0 | Unknown | **45** |
+| Test suite | Unknown | 0 | Unknown | **53** |
 
 ---
 
@@ -422,16 +423,17 @@ osipy-qc/
 
 ```bash
 pytest -v
-# 45 tests, ~0.4s
+# 53 tests, ~0.3s
 ```
 
-45 tests covering:
+53 tests covering:
 - **Registry pattern** — module discovery, instantiation, unknown-check errors, `can_run()` with partial data
 - **QEI components** — PSS, DI, negative fraction, geometric mean collapse, full pipeline
 - **Verdict logic** — fail-fast aggregation, UNKNOWN handling, threshold comparison
 - **Graceful degradation** — pipeline with complete and partial inputs
 - **Motion** — FWD, DVARS, rotation-to-mm, stationary subjects, high-motion detection
 - **Threshold derivation** — IQR fences, GMM bimodal split, KDE valley, edge cases, comparison API
+- **Renal QC** — cortex/medulla ratio, healthy/borderline/CKD, hematocrit correction, graceful degradation
 
 ---
 
