@@ -1005,6 +1005,103 @@ result = run_qc(data)</code></pre>
                     </div>
 
                     {cohort_html}
+
+                    <!-- Evidence & Multi-Organ Showcase -->
+                    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:20px; margin-top:24px;">
+
+                        <!-- Literature & Evidence Base -->
+                        <div class="card" style="border-top: 3px solid {COLORS['primary']};">
+                            <div style="font-size:11px; font-weight:700; color:{COLORS['text_muted']}; letter-spacing:1px; margin-bottom:16px">LITERATURE &amp; EVIDENCE BASE</div>
+                            <div style="font-size:13px; color:{COLORS['text_muted']}; margin-bottom:16px;">Every threshold in this toolbox is traceable to a peer-reviewed publication.</div>
+                            <div style="display:flex;flex-direction:column;gap:10px;">
+                                <div style="padding:10px 12px; background:{COLORS['bg']}; border-radius:8px; border-left:3px solid {COLORS['primary']}">
+                                    <div style="font-weight:600; font-size:12px; color:{COLORS['text_main']}">Dolui et al. (2024) &mdash; JMRI</div>
+                                    <div style="font-size:11px; color:{COLORS['text_muted']}">QEI: geometric mean of PSS, DI, negative fraction</div>
+                                </div>
+                                <div style="padding:10px 12px; background:{COLORS['bg']}; border-radius:8px; border-left:3px solid {COLORS['pass']}">
+                                    <div style="font-weight:600; font-size:12px; color:{COLORS['text_main']}">Mutsaerts et al. (2017) &mdash; JCBFM</div>
+                                    <div style="font-size:11px; color:{COLORS['text_muted']}">sCoV = 56.9 &plusmn; 13.2% in 186 elderly (thresholds)</div>
+                                </div>
+                                <div style="padding:10px 12px; background:{COLORS['bg']}; border-radius:8px; border-left:3px solid {COLORS['warn']}">
+                                    <div style="font-weight:600; font-size:12px; color:{COLORS['text_main']}">Power et al. (2012) &mdash; NeuroImage</div>
+                                    <div style="font-size:11px; color:{COLORS['text_muted']}">FWD 0.5mm scrubbing threshold origin</div>
+                                </div>
+                                <div style="padding:10px 12px; background:{COLORS['bg']}; border-radius:8px; border-left:3px solid #7C3AED">
+                                    <div style="font-weight:600; font-size:12px; color:{COLORS['text_main']}">Nery et al. (2020) &mdash; MAGMA</div>
+                                    <div style="font-size:11px; color:{COLORS['text_muted']}">Renal ASL: cortex/medulla ratio 3:1&ndash;5:1</div>
+                                </div>
+                                <div style="padding:10px 12px; background:{COLORS['bg']}; border-radius:8px; border-left:3px solid #0EA5E9">
+                                    <div style="font-weight:600; font-size:12px; color:{COLORS['text_main']}">Mora &Aacute;lvarez et al. (2024) &mdash; MAGMA</div>
+                                    <div style="font-size:11px; color:{COLORS['text_muted']}">Multi-organ ASL challenges &amp; population-specific QC</div>
+                                </div>
+                                <div style="padding:10px 12px; background:{COLORS['bg']}; border-radius:8px; border-left:3px solid #F59E0B">
+                                    <div style="font-weight:600; font-size:12px; color:{COLORS['text_main']}">Alsop et al. (2015) &mdash; MRM</div>
+                                    <div style="font-size:11px; color:{COLORS['text_muted']}">PCASL consensus: PLD by age (1500&ndash;2000ms)</div>
+                                </div>
+                                <div style="padding:10px 12px; background:{COLORS['bg']}; border-radius:8px; border-left:3px solid {COLORS['text_muted']}">
+                                    <div style="font-weight:600; font-size:12px; color:{COLORS['text_main']}">OSIPI PyASL (2025) &mdash; ISMRM</div>
+                                    <div style="font-size:11px; color:{COLORS['text_muted']}">Downstream integration: QC after PyASL quantification</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Multi-Organ & Population Configs -->
+                        <div class="card" style="border-top: 3px solid {COLORS['pass']};">
+                            <div style="font-size:11px; font-weight:700; color:{COLORS['text_muted']}; letter-spacing:1px; margin-bottom:16px">MULTI-ORGAN QC &amp; POPULATION CONFIGS</div>
+                            <div style="font-size:13px; color:{COLORS['text_muted']}; margin-bottom:16px;">The registry architecture enables organ-specific and population-specific QC via YAML configs.</div>
+
+                            <div style="margin-bottom:20px;">
+                                <div style="font-weight:700; font-size:13px; color:{COLORS['text_main']}; margin-bottom:10px;">Renal Cortex-Medulla QC Module</div>
+                                <div style="padding:12px; background:{COLORS['bg']}; border-radius:8px; font-size:12px; line-height:1.8;">
+                                    <div style="display:flex; justify-content:space-between; border-bottom:1px solid {COLORS['border']}; padding-bottom:6px; margin-bottom:6px;">
+                                        <span style="color:{COLORS['text_muted']}">Cortex CBF range</span>
+                                        <span style="font-weight:600;">200&ndash;450 mL/100g/min</span>
+                                    </div>
+                                    <div style="display:flex; justify-content:space-between; border-bottom:1px solid {COLORS['border']}; padding-bottom:6px; margin-bottom:6px;">
+                                        <span style="color:{COLORS['text_muted']}">Medulla CBF range</span>
+                                        <span style="font-weight:600;">30&ndash;120 mL/100g/min</span>
+                                    </div>
+                                    <div style="display:flex; justify-content:space-between; border-bottom:1px solid {COLORS['border']}; padding-bottom:6px; margin-bottom:6px;">
+                                        <span style="color:{COLORS['text_muted']}">Healthy ratio</span>
+                                        <span style="font-weight:600; color:{COLORS['pass']}">3:1 &ndash; 5:1 &rarr; PASS</span>
+                                    </div>
+                                    <div style="display:flex; justify-content:space-between; border-bottom:1px solid {COLORS['border']}; padding-bottom:6px; margin-bottom:6px;">
+                                        <span style="color:{COLORS['text_muted']}">Borderline ratio</span>
+                                        <span style="font-weight:600; color:{COLORS['warn']}">2:1 &ndash; 3:1 &rarr; WARN</span>
+                                    </div>
+                                    <div style="display:flex; justify-content:space-between;">
+                                        <span style="color:{COLORS['text_muted']}">CKD-like ratio</span>
+                                        <span style="font-weight:600; color:{COLORS['fail']}">&lt; 2:1 &rarr; FAIL</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="font-weight:700; font-size:13px; color:{COLORS['text_main']}; margin-bottom:10px;">4 Population YAML Configs</div>
+                            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+                                <div style="padding:10px; background:{COLORS['bg']}; border-radius:8px; text-align:center;">
+                                    <div style="font-weight:700; font-size:11px; color:{COLORS['pass']}">ADULT 3T</div>
+                                    <div style="font-size:10px; color:{COLORS['text_muted']}">Standard PCASL</div>
+                                </div>
+                                <div style="padding:10px; background:{COLORS['bg']}; border-radius:8px; text-align:center;">
+                                    <div style="font-weight:700; font-size:11px; color:{COLORS['warn']}">NEONATAL CHD</div>
+                                    <div style="font-size:10px; color:{COLORS['text_muted']}">Congenital heart</div>
+                                </div>
+                                <div style="padding:10px; background:{COLORS['bg']}; border-radius:8px; text-align:center;">
+                                    <div style="font-weight:700; font-size:11px; color:{COLORS['primary']}">STROKE / ELDERLY</div>
+                                    <div style="font-size:10px; color:{COLORS['text_muted']}">Relaxed thresholds</div>
+                                </div>
+                                <div style="padding:10px; background:{COLORS['bg']}; border-radius:8px; text-align:center;">
+                                    <div style="font-weight:700; font-size:11px; color:#7C3AED">KIDNEY FAIR</div>
+                                    <div style="font-size:10px; color:{COLORS['text_muted']}">Renal ASL</div>
+                                </div>
+                            </div>
+
+                            <div style="margin-top:16px; padding:10px 12px; background:#F0FDF4; border-radius:8px; border:1px solid #BBF7D0; font-size:11px; color:{COLORS['pass']}; font-weight:600;">
+                                &#10003; 53 unit tests &bull; 6 modules &bull; 8 visualizations &bull; 3 threshold methods
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 

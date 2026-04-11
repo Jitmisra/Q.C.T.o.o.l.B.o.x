@@ -509,7 +509,8 @@ def plot_threshold_comparison(
         spine.set_color("#333")
 
     fig.tight_layout()
-    Path(out_path).parent.mkdir(parents=True, exist_ok=True)
+    if isinstance(out_path, (str, Path)):
+        Path(out_path).parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(out_path, dpi=150, bbox_inches="tight", facecolor=PLOT_BG)
     plt.close(fig)
 
